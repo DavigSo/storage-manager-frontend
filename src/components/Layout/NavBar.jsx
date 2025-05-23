@@ -1,5 +1,8 @@
+// src/components/NavBar.jsx
+import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
+import logo from '../../assets/logo.png'; // ajuste o caminho conforme sua pasta
 
 function NavBar() {
   const { user, logout } = useAuth();
@@ -11,24 +14,19 @@ function NavBar() {
   };
 
   return (
-    <nav className="top-0 left-0 w-full z-50 bg-[#feebee] text-[#f68597] p-4 shadow-md">
+    <nav className="top-0 left-0 w-full z-50 bg-[#feebee] p-4 shadow-md">
       <div className="container mx-auto flex justify-between items-center">
-        <Link to="/" className="text-xl font-bold">
-          Storage Manager
+        <Link to="/" className="flex items-center">
+          <img src={logo} alt="Storage Manager" className="h-10 w-15" />
         </Link>
-        <div className="space-x-4">
+        <div className="space-x-4 text-[#f68597]">
           {user ? (
             <>
-              <Link to="/dashboard" className="hover:underline">
-                Dashboard
-              </Link>
-              <Link to="/create-product" className="hover:underline">
-                Criar Produto
-              </Link>
-              <Link to="/manage-product" className="hover:underline">
-                Gerenciar Produtos
-              </Link>
-              <button onClick={handleLogout} className="hover:underline">
+              <span className="text-sm font-medium">Olá, {user.name}</span>
+              <button
+                onClick={handleLogout}
+                className="hover:underline cursor-pointer"
+              >
                 Sair
               </button>
             </>

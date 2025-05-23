@@ -1,38 +1,10 @@
-// File: src/contexts/ProductContext.tsx
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useToast } from '../components/ui/use-toast';
 
+// Contexto de produtos
+const ProductContext = createContext();
 
-// Define product-related types
-export type ProductCategory = 'ROUPA_0_3M' | 'ROUPA_3_6M' | 'ROUPA_6_9M' | 'ROUPA_9_12M' | 'UTILITARIOS' | 'HIGIENE';
-export type ProductGender = 'MASCULINO' | 'FEMININO' | 'UNISEX';
-
-export interface Product {
-  id: string;
-  name: string;
-  category: ProductCategory;
-  gender: ProductGender;
-  quantity: number;
-  minimumStock: number;
-  expirationDate?: string;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface ProductContextType {
-  products: Product[];
-  loading: boolean;
-  error: string | null;
-  getProducts: () => Promise<void>;
-  getProductById: (id: string) => Product | undefined;
-  addProduct: (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => Promise<boolean>;
-  updateProduct: (id: string, product: Partial<Product>) => Promise<boolean>;
-  deleteProduct: (id: string) => Promise<boolean>;
-  lowStockProducts: Product[];
-}
-
-const ProductContext = createContext<ProductContextType | undefined>(undefined);
-
-const mockProducts: Product[] = [
+const mockProducts = [
   {
     id: '1',
     name: 'Body de algodão',
@@ -85,25 +57,24 @@ const mockProducts: Product[] = [
   },
 ];
 
-export const ProductProvider = ({ children }: { children: ReactNode }) => {
-  const [products, setProducts] = useState<Product[]>([]);
+export const ProductProvider = ({ children }) => {
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
- 
+  const [error, setError] = useState(null);
+  const { toast } = useToast();
+
   useEffect(() => {
     getProducts();
   }, []);
-  
+
   const getProducts = async () => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In a real app, this would be an API call
+      // simula fetch
+      await new Promise(res => setTimeout(res, 1000));
       setProducts(mockProducts);
       setError(null);
-    } catch (err) {
+    } catch {
       setError('Falha ao carregar produtos.');
       toast({
         title: 'Erro',
@@ -114,34 +85,26 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-  
-  const getProductById = (id: string) => {
-    return products.find(product => product.id === id);
-  };
-  
-  const addProduct = async (product: Omit<Product, 'id' | 'createdAt' | 'updatedAt'>) => {
+
+  const getProductById = id => products.find(p => p.id === id);
+
+  const addProduct = async product => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Create new product with generated ID and timestamps
-      const newProduct: Product = {
+      await new Promise(res => setTimeout(res, 1000));
+      const newProduct = {
         ...product,
         id: Math.random().toString(36).substr(2, 9),
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
-      
-      setProducts(prevProducts => [...prevProducts, newProduct]);
-      
+      setProducts(prev => [...prev, newProduct]);
       toast({
         title: 'Produto adicionado',
         description: 'O produto foi adicionado com sucesso.',
       });
-      
       return true;
-    } catch (err) {
+    } catch {
       setError('Falha ao adicionar produto.');
       toast({
         title: 'Erro',
@@ -153,31 +116,24 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-  
-  const updateProduct = async (id: string, productUpdate: Partial<Product>) => {
+
+  const updateProduct = async (id, update) => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setProducts(prevProducts => prevProducts.map(product => {
-        if (product.id === id) {
-          return {
-            ...product,
-            ...productUpdate,
-            updatedAt: new Date().toISOString(),
-          };
-        }
-        return product;
-      }));
-      
+      await new Promise(res => setTimeout(res, 1000));
+      setProducts(prev =>
+        prev.map(p =>
+          p.id === id
+            ? { ...p, ...update, updatedAt: new Date().toISOString() }
+            : p
+        )
+      );
       toast({
         title: 'Produto atualizado',
         description: 'O produto foi atualizado com sucesso.',
       });
-      
       return true;
-    } catch (err) {
+    } catch {
       setError('Falha ao atualizar produto.');
       toast({
         title: 'Erro',
@@ -189,22 +145,18 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
-  
-  const deleteProduct = async (id: string) => {
+
+  const deleteProduct = async id => {
     setLoading(true);
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      setProducts(prevProducts => prevProducts.filter(product => product.id !== id));
-      
+      await new Promise(res => setTimeout(res, 1000));
+      setProducts(prev => prev.filter(p => p.id !== id));
       toast({
         title: 'Produto excluído',
         description: 'O produto foi excluído com sucesso.',
       });
-      
       return true;
-    } catch (err) {
+    } catch {
       setError('Falha ao excluir produto.');
       toast({
         title: 'Erro',
@@ -216,31 +168,49 @@ export const ProductProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
     }
   };
+
+  const lowStockProducts = products.filter(p => p.quantity < p.minimumStock);
+
+  return (
+    <ProductContext.Provider
+      value={{
+        products,
+        loading,
+        error,
+        getProducts,
+        getProductById,
+        addProduct,
+        updateProduct,
+        deleteProduct,
+        lowStockProducts,
+      }}
+    >
+      {children}
+    </ProductContext.Provider>
+  );
 };
 
 export const useProducts = () => {
-  const context = useContext(ProductContext);
-  if (!context) throw new Error('useProducts must be used within ProductProvider');
-  return context;
+  const ctx = useContext(ProductContext);
+  if (!ctx)
+    throw new Error('useProducts deve ser usado dentro de ProductProvider');
+  return ctx;
 };
 
-export const getCategoryName = (category: ProductCategory): string => {
-  const map: Record<ProductCategory, string> = {
+// Helpers para nomes legíveis
+export const getCategoryName = category =>
+  ({
     ROUPA_0_3M: 'Roupas 0-3 meses',
     ROUPA_3_6M: 'Roupas 3-6 meses',
     ROUPA_6_9M: 'Roupas 6-9 meses',
     ROUPA_9_12M: 'Roupas 9-12 meses',
     UTILITARIOS: 'Utilitários',
     HIGIENE: 'Higiene',
-  };
-  return map[category] || category;
-};
+  })[category] || category;
 
-export const getGenderName = (gender: ProductGender): string => {
-  const map: Record<ProductGender, string> = {
+export const getGenderName = gender =>
+  ({
     MASCULINO: 'Masculino',
     FEMININO: 'Feminino',
     UNISEX: 'Unissex',
-  };
-  return map[gender] || gender;
-};
+  })[gender] || gender;

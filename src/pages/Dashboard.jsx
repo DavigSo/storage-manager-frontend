@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import StockOverview from '../components/dashboard/StockOverview';
 
 function Dashboard() {
   const { isAuthenticated, isLoading } = useAuth();
@@ -20,9 +21,11 @@ function Dashboard() {
     );
   }
   return (
-    <div className="pt-16 pl-64">
+    <div className="bg-[#bbe4e5] pt-16 pl-64">
       <div className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+        <h1 className="text-2xl text-[#d37080] font-bold mb-6">
+          Painel de controle
+        </h1>
         <div className="space-y-8">
           <StockOverview />
         </div>

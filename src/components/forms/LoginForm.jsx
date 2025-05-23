@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -25,7 +25,7 @@ function LoginForm() {
     <div className="w-full max-w-md">
       <div className="rounded-lg bg-[#feebee] text-card-foreground shadow-sm">
         <h1 className="flex flex-col space-y-1.5 p-6 text-5xl font-bold text-[#f68597]">
-          Login
+          Acessar Conta
         </h1>
 
         <form onSubmit={handleSubmit}>
@@ -92,7 +92,8 @@ function LoginForm() {
             </div>
           </div>
           <div className="flex items-center p-6 pt-0">
-            <button
+            <Link
+              to="/dashboard"
               className="
                 w-full                     
                 bg-[#f68597]               
@@ -111,7 +112,7 @@ function LoginForm() {
               disabled={isLoading}
             >
               {isLoading ? 'Carregando...' : 'Entrar'}
-            </button>
+            </Link>
           </div>
         </form>
       </div>

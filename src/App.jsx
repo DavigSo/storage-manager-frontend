@@ -5,10 +5,12 @@ import NavBar from './components/Layout/NavBar';
 import './App.css';
 import Dashboard from './pages/Dashboard';
 import { ProductProvider } from './contexts/ProductContext';
+import { Toaster } from './components/ui/toaster';
 
 function App() {
   return (
     <ProductProvider>
+      <Toaster />
       <div className="min-h-screen bg-gray-600">
         <NavBar />
         <Routes>

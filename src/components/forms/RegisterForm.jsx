@@ -7,11 +7,11 @@ function RegisterForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error, setError] = useState('');
-  const { register, isLoading } = useAuth();
+  const [setError] = useState('');
+  const { register } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async e => {
     e.preventDefault();
     setError('');
 
@@ -38,7 +38,7 @@ function RegisterForm() {
   return (
     <div className="w-full max-w-md">
       <div className="rounded-lg bg-[#feebee] shadow-sm">
-        <h1 className="p-6 text-5xl font-bold text-[#f68597]">Registro</h1>
+        <h1 className="p-6 text-5xl font-bold text-[#f68597]">Registrar-se</h1>
 
         <form onSubmit={handleSubmit}>
           <div className="p-6 space-y-4">
@@ -130,7 +130,7 @@ function RegisterForm() {
     px-4 py-2                  
     rounded-md                 
     shadow-md                  
-    hover:bg-[#e76a88]         
+    hover:bg-[#e76a88]        
     focus:outline-none         
     focus:ring-2               
     focus:ring-[#f68597]      
