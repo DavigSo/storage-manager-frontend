@@ -1,18 +1,21 @@
 import { Routes, Route } from 'react-router-dom';
 import Login from './pages/Login';
 import Register from './pages/Register';
+
 import NavBar from './components/Layout/NavBar';
 import './App.css';
 import Dashboard from './pages/Dashboard';
 import { ProductProvider } from './contexts/ProductContext';
 import { Toaster } from './components/ui/toaster';
+import Sidebar from './components/Layout/SideBar';
 
 function App() {
   return (
     <ProductProvider>
       <Toaster />
-      <div className="min-h-screen bg-gray-600">
+      <div className="min-h-screen bg-[#8FD3D5]">
         <NavBar />
+        <Sidebar />
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />

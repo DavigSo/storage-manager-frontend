@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '../components/ui/use-toast';
 
-// Contexto de produtos
 const ProductContext = createContext();
 
 const mockProducts = [

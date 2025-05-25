@@ -18,7 +18,7 @@ function Register() {
 
   return (
     <div
-      className="bg-[#bbe4e5] h-screen flex items-center justify-center bg-cover bg-center px-4 sm:px-6 lg:px-8"
+      className="bg-[#8FD3D5] h-screen flex items-center justify-center bg-cover bg-center px-4 sm:px-6 lg:px-8"
       style={{ backgroundImage: `url(${bg})` }}
     >
       <div className="max-w-md w-full space-y-8">

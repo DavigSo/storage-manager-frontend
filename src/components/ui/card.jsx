@@ -1,4 +1,3 @@
-// src/components/ui/card.jsx
 import React from 'react';
 import { cn } from '@/lib/utils';
 
@@ -6,7 +5,7 @@ export const Card = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      'rounded-lg border- border-[#bbe4e5] bg-card text-card-foreground shadow-sm',
+      'rounded-lg border-3 border-[#93c2d2] bg-[#feebee] text-card-foreground shadow-sm',
       className
     )}
     {...props}
@@ -40,7 +39,7 @@ export const CardDescription = React.forwardRef(
     <p
       ref={ref}
       className={cn(
-        'text-sm text-[#f68597] font-semibold leading-none tracking-tight',
+        'text-sm font-semibold leading-none tracking-tight',
         className
       )}
       {...props}
@@ -50,7 +49,11 @@ export const CardDescription = React.forwardRef(
 CardDescription.displayName = 'CardDescription';
 
 export const CardContent = React.forwardRef(({ className, ...props }, ref) => (
-  <div ref={ref} className={cn('p-6 pt-0', className)} {...props} />
+  <div
+    ref={ref}
+    className={cn('p-6 pt-0 font-semibold text-[#3dbcc1]', className)}
+    {...props}
+  />
 ));
 CardContent.displayName = 'CardContent';
 

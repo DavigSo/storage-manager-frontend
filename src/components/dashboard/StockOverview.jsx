@@ -23,9 +23,9 @@ const COLORS = [
   '#5DADE2',
 ];
 const GENDER_COLORS = {
-  MASCULINO: '#AED6F1',
-  FEMININO: '#EBDEF0',
-  UNISEX: '#F9E79F',
+  MASCULINO: '#2c2cc7',
+  FEMININO: '#ad83bd',
+  UNISSEX: '#9090cf',
 };
 
 const StockOverview = () => {
@@ -49,7 +49,7 @@ const StockOverview = () => {
     // por gênero
     const genMap = {};
     products.forEach(p => {
-      const name = getGenderName(p.gender);
+      const name = getGenderName(p.gender).toUpperCase(); // padronize
       genMap[name] = (genMap[name] || 0) + p.quantity;
     });
     setGenderData(
@@ -79,8 +79,9 @@ const StockOverview = () => {
       <text
         x={x}
         y={y}
-        fill="white"
-        fontSize={12}
+        fill="#3dbcc1"
+        fontSize={10}
+        fontWeight="bold"
         textAnchor={x > cx ? 'start' : 'end'}
         dominantBaseline="central"
       >
@@ -135,7 +136,7 @@ const StockOverview = () => {
           <CardHeader>
             <CardTitle>Estoque por Categoria</CardTitle>
           </CardHeader>
-          <CardContent className="h-[230px]">
+          <CardContent className="h-[230px] ">
             {categoryData.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>

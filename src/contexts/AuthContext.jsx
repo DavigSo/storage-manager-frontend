@@ -10,9 +10,9 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     if (token) {
-      // Simular verificação de token com o backend
-      // Aqui você faria uma chamada para validar o token
-      setUser({ role: 'USER' }); // Exemplo: substituir por dados reais
+      // Exemplo de GET /me com token:
+      const storedUser = JSON.parse(localStorage.getItem('userData'));
+      setUser(storedUser);
     }
   }, [token]);
 
