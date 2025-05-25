@@ -11,14 +11,8 @@ function LoginForm() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    try {
-      const success = await login(email, password);
-      if (success) {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      console.error('Login failed:', error);
-    }
+    const ok = await login(email.trim(), password);
+    if (ok) navigate('/dashboard');
   };
 
   return (
@@ -92,27 +86,16 @@ function LoginForm() {
             </div>
           </div>
           <div className="flex items-center p-6 pt-0">
-            <Link
-              to="/dashboard"
-              className="
-                w-full                     
-                bg-[#f68597]               
-                text-white               
-                font-medium               
-                px-4 py-2                  
-                rounded-md                 
-                shadow-md                  
-                hover:bg-[#e76a88]         
-                focus:outline-none         
-                focus:ring-2               
-                focus:ring-[#f68597]      
-                transition                 
-                duration-200              
-              "
+            <button
+              type="submit"
               disabled={isLoading}
+              className=" w-full bg-[#f68597] text-white
+              font-medium px-4 py-2 rounded-md shadow-md hover:bg-[#e76a88]
+              focus:outline-none focus:ring-2 focus:ring-[#f68597] transition
+              duration-200 "
             >
               {isLoading ? 'Carregando...' : 'Entrar'}
-            </Link>
+            </button>
           </div>
         </form>
       </div>

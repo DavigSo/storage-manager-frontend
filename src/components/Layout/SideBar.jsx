@@ -1,5 +1,3 @@
-// src/components/Layout/Sidebar.jsx
-import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { cn } from '../../lib/utils';
@@ -40,10 +38,10 @@ const SideNavItem = ({ icon, title, to, adminOnly = false }) => {
       to={to}
       className={({ isActive }) =>
         cn(
-          'flex items-center gap-3 px-4 py-2 rounded-md transition-colors',
+          'flex items-center gap-3 px-4 py-2 rounded-md text-sm font-medium transition-colors transition-transform duration-200',
           isActive
-            ? 'bg-primary text-primary-foreground'
-            : 'hover:bg-sidebar-accent text-sidebar-foreground'
+            ? 'bg-[#f68597] text-white scale-105'
+            : 'text-[#f68597] hover:bg-[#f68597] hover:text-white hover:scale-105'
         )
       }
     >
@@ -53,27 +51,25 @@ const SideNavItem = ({ icon, title, to, adminOnly = false }) => {
   );
 };
 
-const Sidebar = () => {
+const Sidebar = ({ open, onClose }) => {
   const { isAuthenticated } = useAuth();
-  const [open, setOpen] = useState(false);
+
   if (!isAuthenticated) return null;
 
   return (
     <>
       {/* botão mobile */}
-      <button
-        className="fixed top-4 left-4 z-50 p-2 rounded-md bg-primary text-white md:hidden"
-        onClick={() => setOpen(!open)}
-      >
-        <Menu size={24} />
-      </button>
+      {open && (
+        <div className="fixed inset-0  z-30 md:hidden" onClick={onClose} />
+      )}
 
       {/* sidebar */}
       <aside
         className={cn(
-          'fixed top-0 left-0 h-full w-64 bg-sidebar border-r border-gray-200 z-40 transform transition-transform',
+          'bg-[#feebee] fixed left-0 w-64 bg-sidebar border-r border-gray-200 z-40 transform transition-transform',
+          'top-14 h-[calc(100vh-3.5rem)]',
           open ? 'translate-x-0' : '-translate-x-full',
-          'md:translate-x-0 md:top-14 md:h-[calc(100vh-3.5rem)]'
+          'md:translate-x-0'
         )}
       >
         <div className="p-4 space-y-1">
@@ -82,14 +78,6 @@ const Sidebar = () => {
           ))}
         </div>
       </aside>
-
-      {/* overlay mobile */}
-      {open && (
-        <div
-          className="fixed inset-0 bg-black opacity-50 z-30"
-          onClick={() => setOpen(false)}
-        />
-      )}
     </>
   );
 };

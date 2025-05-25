@@ -24,7 +24,7 @@ function Dashboard() {
   return (
     <div className="bg-[#8FD3D5] pt-16 pl-64">
       <div className="p-6">
-        <h1 className="text-2xl text-[#f68597] font-bold mb-6">
+        <h1 className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
           Painel de controle
         </h1>
         <div className="space-y-8">

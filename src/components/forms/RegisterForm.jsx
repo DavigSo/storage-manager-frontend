@@ -1,40 +1,24 @@
 import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [setError] = useState('');
-  const { register } = useAuth();
+  const { register, isLoading } = useAuth();
   const navigate = useNavigate();
 
   const handleSubmit = async e => {
     e.preventDefault();
-    setError('');
-
-    if (password !== confirmPassword) {
-      setError('As senhas não correspondem');
-      return;
-    }
-
-    if (password.length < 6) {
-      setError('A senha deve ter pelo menos 6 caracteres');
-      return;
-    }
-
-    try {
-      const success = await register(name, email, password);
-      if (success) {
-        navigate('/dashboard');
-      }
-    } catch (error) {
-      console.error('Registration failed:', error);
-      setError('Falha no registro. Tente novamente.');
-    }
+    if (password !== confirmPassword)
+      return toast.error('Senhas não coincidem');
+    const ok = await register(name.trim(), email.trim(), password);
+    if (ok) navigate('/dashboard');
   };
+
   return (
     <div className="w-full max-w-md">
       <div className="rounded-lg bg-[#feebee] shadow-sm">
@@ -122,6 +106,8 @@ function RegisterForm() {
 
             {/* Botão de Registro */}
             <button
+              type="submit"
+              disabled={isLoading}
               className="
     w-full                     
     bg-[#f68597]               
@@ -138,7 +124,7 @@ function RegisterForm() {
     duration-200              
   "
             >
-              Cadastrar
+              {isLoading ? 'Carregando...' : 'Cadastrar'}
             </button>
           </div>
         </form>

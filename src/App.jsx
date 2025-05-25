@@ -8,14 +8,16 @@ import Dashboard from './pages/Dashboard';
 import { ProductProvider } from './contexts/ProductContext';
 import { Toaster } from './components/ui/toaster';
 import Sidebar from './components/Layout/SideBar';
+import { useState } from 'react';
 
 function App() {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   return (
     <ProductProvider>
       <Toaster />
-      <div className="min-h-screen bg-[#8FD3D5]">
-        <NavBar />
-        <Sidebar />
+      <NavBar onToggleSidebar={() => setSidebarOpen(v => !v)} />
+      <div className="min-h-screen bg-[#8FD3D5] ">
+        <Sidebar open={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
         <Routes>
           <Route path="/" element={<Login />} />
           <Route path="/login" element={<Login />} />

@@ -79,9 +79,7 @@ const StockOverview = () => {
       <text
         x={x}
         y={y}
-        fill="#3dbcc1"
-        fontSize={10}
-        fontWeight="bold"
+        className="fill-[#00000074] font-bold text-xs"
         textAnchor={x > cx ? 'start' : 'end'}
         dominantBaseline="central"
       >
