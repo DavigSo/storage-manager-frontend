@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import {
   useProducts,
-  getCategoryName,
-  getGenderName,
-} from '@/contexts/ProductContext';
+  getCategoryOptions,
+  getGenderOptions,
+} from '../../contexts/ProductContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {
   PieChart,
@@ -28,6 +28,15 @@ const GENDER_COLORS = {
   UNISSEX: '#9090cf',
 };
 
+const getCategoryName = (value) => {
+  const opt = getCategoryOptions().find(o => o.value === value);
+  return opt ? opt.label : value;
+};
+const getGenderName = (value) => {
+  const opt = getGenderOptions().find(o => o.value === value);
+  return opt ? opt.label : value;
+};
+
 const StockOverview = () => {
   const { products } = useProducts();
   const [categoryData, setCategoryData] = useState([]);
@@ -49,7 +58,7 @@ const StockOverview = () => {
     // por gênero
     const genMap = {};
     products.forEach(p => {
-      const name = getGenderName(p.gender).toUpperCase(); // padronize
+      const name = getGenderName(p.gender).toUpperCase();
       genMap[name] = (genMap[name] || 0) + p.quantity;
     });
     setGenderData(
@@ -89,8 +98,7 @@ const StockOverview = () => {
   };
 
   return (
-    <div className="space-y-6 ">
-      {/* Resumo rápido */}
+    <div className="space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {[
           {
@@ -127,14 +135,12 @@ const StockOverview = () => {
         ))}
       </div>
 
-      {/* Gráficos */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Categoria */}
         <Card className="h-[300px]">
           <CardHeader>
             <CardTitle>Estoque por Categoria</CardTitle>
           </CardHeader>
-          <CardContent className="h-[230px] ">
+          <CardContent className="h-[230px]">
             {categoryData.length ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -153,9 +159,7 @@ const StockOverview = () => {
                       <Cell key={idx} fill={COLORS[idx % COLORS.length]} />
                     ))}
                   </Pie>
-                  <Tooltip
-                    formatter={val => [`${val} unidades`, 'Quantidade']}
-                  />
+                  <Tooltip formatter={val => [`${val} unidades`, 'Quantidade']} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>
@@ -167,7 +171,6 @@ const StockOverview = () => {
           </CardContent>
         </Card>
 
-        {/* Gênero */}
         <Card className="h-[300px]">
           <CardHeader>
             <CardTitle>Estoque por Gênero</CardTitle>
@@ -194,9 +197,7 @@ const StockOverview = () => {
                       />
                     ))}
                   </Pie>
-                  <Tooltip
-                    formatter={val => [`${val} unidades`, 'Quantidade']}
-                  />
+                  <Tooltip formatter={val => [`${val} unidades`, 'Quantidade']} />
                   <Legend />
                 </PieChart>
               </ResponsiveContainer>

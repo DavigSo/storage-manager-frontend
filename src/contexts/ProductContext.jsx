@@ -196,7 +196,6 @@ export const useProducts = () => {
   return ctx;
 };
 
-// Helpers para nomes legíveis
 export const getCategoryName = category =>
   ({
     ROUPA_0_3M: 'Roupas 0-3 meses',
@@ -213,3 +212,27 @@ export const getGenderName = gender =>
     FEMININO: 'Feminino',
     UNISEX: 'Unissex',
   })[gender] || gender;
+
+
+const categoryOptions = [
+  { value: 'ROUPA_0_3M',  label: getCategoryName('ROUPA_0_3M') },
+  { value: 'ROUPA_3_6M',  label: getCategoryName('ROUPA_3_6M') },
+  { value: 'ROUPA_6_9M',  label: getCategoryName('ROUPA_6_9M') },
+  { value: 'ROUPA_9_12M', label: getCategoryName('ROUPA_9_12M') },
+  { value: 'UTILITARIOS', label: getCategoryName('UTILITARIOS') },
+  { value: 'HIGIENE',     label: getCategoryName('HIGIENE') },
+];
+
+const genderOptions = [
+  { value: 'MASCULINO', label: getGenderName('MASCULINO') },
+  { value: 'FEMININO',  label: getGenderName('FEMININO') },
+  { value: 'UNISEX',    label: getGenderName('UNISEX') },
+];
+
+export function getCategoryOptions() {
+  return categoryOptions;
+}
+
+export function getGenderOptions() {
+  return genderOptions;
+}

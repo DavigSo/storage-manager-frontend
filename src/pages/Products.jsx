@@ -4,7 +4,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useProducts } from '../contexts/ProductContext';
 import ProductCard from '../components/ProductCard';
 import { Button } from '../components/ui/button';
-import Input from '../components/ui/input';
+import Input from '../components/ui/Input';
 import {
   Select,
   SelectContent,
