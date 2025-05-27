@@ -127,7 +127,7 @@ const Products = () => {
     hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer 
   "
           >
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="h-4 w-4 mr-2 " />
             Adicionar Produto
           </Button>
         </div>

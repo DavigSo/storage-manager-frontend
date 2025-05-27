@@ -1,8 +1,12 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useProducts,getCategoryOptions,getGenderOptions } from '../../contexts/ProductContext';
+import {
+  useProducts,
+  getCategoryOptions,
+  getGenderOptions,
+} from '../../contexts/ProductContext';
 import { Button } from '../ui/button';
-
+import Input from '../ui/Input';
 import {
   Select,
   SelectContent,
@@ -13,10 +17,10 @@ import {
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
+  CardDescription,
+  CardFooter,
 } from '../ui/card';
 import Label from '../ui/LABEL.JSX';
 
@@ -44,12 +48,20 @@ export function ProductForm({ productId, isEdit = false }) {
     }
   }, [isEdit, productId, getProductById]);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async e => {
     e.preventDefault();
-    const productData = { name, category, gender, quantity, minimumStock, expirationDate: expirationDate || undefined };
-    let success;
-    if (isEdit && productId) success = await updateProduct(productId, productData);
-    else success = await addProduct(productData);
+    const data = {
+      name,
+      category,
+      gender,
+      quantity,
+      minimumStock,
+      expirationDate: expirationDate || undefined,
+    };
+    const success =
+      isEdit && productId
+        ? await updateProduct(productId, data)
+        : await addProduct(data);
     if (success) navigate('/products');
   };
 
@@ -57,30 +69,57 @@ export function ProductForm({ productId, isEdit = false }) {
   const genderOptions = getGenderOptions();
 
   return (
-    <div className="w-full max-w-2xl">
-      <Card>
-        <CardHeader>
-          <CardTitle>{isEdit ? 'Editar Produto' : 'Adicionar Novo Produto'}</CardTitle>
-          <CardDescription>
-            {isEdit ? 'Edite as informações do produto existente.' : 'Preencha os detalhes para adicionar um novo produto.'}
-          </CardDescription>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-4">
+    <div className="pt-16 pl-64">
+      <div className="p-6">
+        <div className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
+          <h1 className="text-2xl font-bold">
+            {isEdit ? 'Editar Produto' : 'Adicionar Produto'}
+          </h1>
+        </div>
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Detalhes do Produto</CardTitle>
+            <CardDescription className="text-sm text-gray-600">
+              {isEdit
+                ? 'Atualize os campos desejados.'
+                : 'Preencha os campos para cadastrar.'}
+            </CardDescription>
+          </CardHeader>
+          <form onSubmit={handleSubmit} className="p-6 space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="name">Nome do Produto</Label>
-              <input id="name" value={name} onChange={(e) => setName(e.target.value)} required placeholder="Nome do produto" />
+              <Label htmlFor="name">Nome</Label>
+              <Input
+                id="name"
+                value={name}
+                onChange={e => setName(e.target.value)}
+                placeholder="Nome do produto"
+                required
+              />
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="category">Categoria</Label>
                 <Select value={category} onValueChange={setCategory}>
-                  <SelectTrigger id="category">
-                    <SelectValue placeholder="Selecione uma categoria" />
+                  <SelectTrigger
+                    id="category"
+                    className="
+    flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
+    transition-colors transition-transform duration-200
+    hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer 
+  "
+                  >
+                    <SelectValue placeholder="Selecione categoria" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {categoryOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                  <SelectContent className="text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl">
+                    {categoryOptions.map(opt => (
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className="cursor-pointer transition-colors transition-transform duration-200 hover:bg-[#f68597] hover:text-white hover:scale-105"
+                      >
+                        {opt.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -88,43 +127,93 @@ export function ProductForm({ productId, isEdit = false }) {
               <div className="space-y-2">
                 <Label htmlFor="gender">Gênero</Label>
                 <Select value={gender} onValueChange={setGender}>
-                  <SelectTrigger id="gender">
-                    <SelectValue placeholder="Selecione o gênero" />
+                  <SelectTrigger
+                    id="gender"
+                    className="
+    flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
+    transition-colors transition-transform duration-200
+    hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer 
+  "
+                  >
+                    <SelectValue placeholder="Selecione gênero" />
                   </SelectTrigger>
-                  <SelectContent>
-                    {genderOptions.map((option) => (
-                      <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                  <SelectContent className="text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl">
+                    {genderOptions.map(opt => (
+                      <SelectItem
+                        key={opt.value}
+                        value={opt.value}
+                        className="cursor-pointer transition-colors transition-transform duration-200 hover:bg-[#f68597] hover:text-white hover:scale-105"
+                      >
+                        {opt.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
                 <Label htmlFor="quantity">Quantidade</Label>
-                <input id="quantity" type="number" min="0" value={quantity} onChange={(e) => setQuantity(Number(e.target.value))} required />
+                <Input
+                  id="quantity"
+                  type="number"
+                  min={0}
+                  value={quantity}
+                  onChange={e => setQuantity(Number(e.target.value))}
+                  required
+                />
               </div>
-              
               <div className="space-y-2">
                 <Label htmlFor="minimumStock">Estoque Mínimo</Label>
-                <input id="minimumStock" type="number" min="0" value={minimumStock} onChange={(e) => setMinimumStock(Number(e.target.value))} required />
+                <Input
+                  id="minimumStock"
+                  type="number"
+                  min={0}
+                  value={minimumStock}
+                  onChange={e => setMinimumStock(Number(e.target.value))}
+                  required
+                />
               </div>
             </div>
+
             <div className="space-y-2">
-              <Label htmlFor="expirationDate">Data de Validade (se aplicável)</Label>
-              <input id="expirationDate" type="date" value={expirationDate} onChange={(e) => setExpirationDate(e.target.value)} />
+              <Label htmlFor="expirationDate">
+                Data de Validade (se aplicável)
+              </Label>
+              <input
+                id="expirationDate"
+                type="date"
+                value={expirationDate}
+                onChange={e => setExpirationDate(e.target.value)}
+              />
             </div>
-          </CardContent>
-          <CardFooter className="flex justify-between">
-            <Button type="button" variant="outline" onClick={() => navigate('/products')}>
-              Cancelar
-            </Button>
-            <Button type="submit" disabled={loading}>
-              {loading ? 'Salvando...' : isEdit ? 'Salvar Alterações' : 'Adicionar Produto'}
-            </Button>
-          </CardFooter>
-        </form>
-      </Card>
+            <CardFooter className="flex justify-between border-t pt-4">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => navigate('/products')}
+                className="p-2 rounded-md cursor-pointer transition-colors transition-transform duration-200 hover:bg-[#f68597] hover:text-white hover:scale-105"
+              >
+                Cancelar
+              </Button>
+              <Button
+                type="submit"
+                disabled={loading}
+                className="p-2 rounded-md cursor-pointer transition-colors transition-transform duration-200 hover:bg-[#f68597] hover:text-white hover:scale-105"
+              >
+                {loading
+                  ? isEdit
+                    ? 'Salvando...'
+                    : 'Adicionando...'
+                  : isEdit
+                    ? 'Salvar'
+                    : 'Adicionar'}
+              </Button>
+            </CardFooter>
+          </form>
+        </Card>
+      </div>
     </div>
   );
 }

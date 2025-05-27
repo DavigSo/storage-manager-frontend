@@ -17,7 +17,7 @@ function LoginForm() {
 
   return (
     <div className="w-full max-w-md">
-      <div className="rounded-lg bg-[#feebee] text-card-foreground shadow-sm">
+      <div className="p-2 rounded-lg bg-[#feebee] text-card-foreground shadow-sm">
         <h1 className="flex flex-col space-y-1.5 p-6 text-5xl font-bold text-[#f68597]">
           Acessar Conta
         </h1>
