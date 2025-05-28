@@ -10,7 +10,7 @@ const mockProducts = [
     category: 'ROUPA_0_3M',
     gender: 'UNISEX',
     quantity: 15,
-    minimumStock: 10,
+    minimumStock: 2,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -20,7 +20,7 @@ const mockProducts = [
     category: 'ROUPA_0_3M',
     gender: 'MASCULINO',
     quantity: 8,
-    minimumStock: 10,
+    minimumStock: 2,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -30,7 +30,7 @@ const mockProducts = [
     category: 'ROUPA_0_3M',
     gender: 'FEMININO',
     quantity: 12,
-    minimumStock: 10,
+    minimumStock: 2,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -40,7 +40,7 @@ const mockProducts = [
     category: 'HIGIENE',
     gender: 'UNISEX',
     quantity: 5,
-    minimumStock: 20,
+    minimumStock: 2,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -50,7 +50,7 @@ const mockProducts = [
     category: 'UTILITARIOS',
     gender: 'UNISEX',
     quantity: 18,
-    minimumStock: 10,
+    minimumStock: 2,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   },
@@ -93,10 +93,14 @@ export const ProductProvider = ({ children }) => {
       await new Promise(res => setTimeout(res, 1000));
       const newProduct = {
         ...product,
+
         id: Math.random().toString(36).substr(2, 9),
+
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
       };
+      console.log('[addProduct] newProduct:', newProduct);
+
       setProducts(prev => [...prev, newProduct]);
       toast({
         title: 'Produto adicionado',
@@ -213,20 +217,19 @@ export const getGenderName = gender =>
     UNISEX: 'Unissex',
   })[gender] || gender;
 
-
 const categoryOptions = [
-  { value: 'ROUPA_0_3M',  label: getCategoryName('ROUPA_0_3M') },
-  { value: 'ROUPA_3_6M',  label: getCategoryName('ROUPA_3_6M') },
-  { value: 'ROUPA_6_9M',  label: getCategoryName('ROUPA_6_9M') },
+  { value: 'ROUPA_0_3M', label: getCategoryName('ROUPA_0_3M') },
+  { value: 'ROUPA_3_6M', label: getCategoryName('ROUPA_3_6M') },
+  { value: 'ROUPA_6_9M', label: getCategoryName('ROUPA_6_9M') },
   { value: 'ROUPA_9_12M', label: getCategoryName('ROUPA_9_12M') },
   { value: 'UTILITARIOS', label: getCategoryName('UTILITARIOS') },
-  { value: 'HIGIENE',     label: getCategoryName('HIGIENE') },
+  { value: 'HIGIENE', label: getCategoryName('HIGIENE') },
 ];
 
 const genderOptions = [
   { value: 'MASCULINO', label: getGenderName('MASCULINO') },
-  { value: 'FEMININO',  label: getGenderName('FEMININO') },
-  { value: 'UNISEX',    label: getGenderName('UNISEX') },
+  { value: 'FEMININO', label: getGenderName('FEMININO') },
+  { value: 'UNISEX', label: getGenderName('UNISEX') },
 ];
 
 export function getCategoryOptions() {

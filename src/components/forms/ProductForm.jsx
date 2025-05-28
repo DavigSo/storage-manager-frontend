@@ -58,6 +58,7 @@ export function ProductForm({ productId, isEdit = false }) {
       minimumStock,
       expirationDate: expirationDate || undefined,
     };
+    console.log('[ProductForm] dados enviados:', data);
     const success =
       isEdit && productId
         ? await updateProduct(productId, data)
