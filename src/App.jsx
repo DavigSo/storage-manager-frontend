@@ -19,7 +19,7 @@ function App() {
     <ProductProvider>
       <Toaster />
       <NavBar onToggleSidebar={() => setSidebarOpen(v => !v)} />
-      <div className="min-h-screen bg-[#8FD3D5]">
+      <div className="min-h-screen  bg-[#8FD3D5] ">
         <Sidebar open={isSidebarOpen} onClose={() => setSidebarOpen(false)} />
         <Routes>
           <Route path="/" element={<Login />} />

@@ -1,45 +1,40 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Card, CardContent, CardFooter, CardHeader } from './ui/card';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { getCategoryName, getGenderName } from '../contexts/ProductContext';
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  CardFooter,
+} from '../components/ui/card';
+import { Button } from '../components/ui/button';
+import { Badge } from '../components/ui/badge';
+import { getCategoryName, getGenderName } from '@/contexts/ProductContext';
 
 const ProductCard = ({ product, onDelete }) => {
   const isLowStock = product.quantity < product.minimumStock;
 
-  const getGenderColor = () => {
-    switch (product.gender) {
-      case 'MASCULINO':
-        return '#2c2cc7';
-      case 'FEMININO':
-        return '#ad83bd';
-      case 'UNISEX':
-        return '#9090cf';
-      default:
-        return '#F3F4F6';
-    }
+  // Define cores por gênero
+  const genderColors = {
+    MASCULINO: '#2c2cc7',
+    FEMININO: '#ad83bd',
+    UNISEX: '#9090cf',
   };
-
-  const genderColor = getGenderColor();
+  const genderColor = genderColors[product.gender] || '#F3F4F6';
 
   return (
     <Card
-      style={{ backgroundColor: `${genderColor}20` }}
+      style={{
+        backgroundColor: `${genderColor}20`,
+        color: genderColor,
+      }}
       className="card-hover transition-transform transform hover:scale-105"
     >
-      <CardHeader className="flex flex-col sm:flex-row flex-wrap justify-between items-start gap-2 pb-2 p-4 sm:p-6">
+      <CardHeader className="flex flex-col sm:flex-row justify-between items-start gap-2 pb-2 p-4 sm:p-6">
         <div className="flex-1 space-y-1">
-          <h3
-            className="text-base sm:text-lg md:text-xl font-semibold break-words"
-            style={{ color: genderColor }}
-          >
+          <h3 className="text-base sm:text-lg md:text-xl font-semibold break-words">
             {product.name}
           </h3>
-          <p
-            className="text-xs sm:text-sm text-muted-foreground"
-            style={{ color: genderColor }}
-          >
+          <p className="text-xs sm:text-sm text-muted-foreground">
             {getCategoryName(product.category)}
           </p>
         </div>
@@ -51,7 +46,6 @@ const ProductCard = ({ product, onDelete }) => {
                 ? 'secondary'
                 : 'outline'
           }
-          className="mt-2 sm:mt-0 whitespace-nowrap px-2"
         >
           {getGenderName(product.gender)}
         </Badge>
@@ -63,7 +57,9 @@ const ProductCard = ({ product, onDelete }) => {
             Quantidade:
           </span>
           <span
-            className={`mt-1 font-semibold ${isLowStock ? 'text-destructive' : 'text-green-600'}`}
+            className={`mt-1 font-semibold ${
+              isLowStock ? 'text-destructive' : 'text-green-600'
+            }`}
             style={{ color: genderColor }}
           >
             {product.quantity}
@@ -91,13 +87,12 @@ const ProductCard = ({ product, onDelete }) => {
         )}
       </CardContent>
 
-      <CardFooter className=" flex-col sm:flex-row items-stretch p-4 sm:p-6 pt-2 gap-2">
-        <Link to={`/products/${product.id}`} className="flex-1">
+      <CardFooter className="flex flex-col sm:flex-row items-stretch p-4 sm:p-6 pt-2 gap-2">
+        <Link to={`/products/${product._id}`} className="flex-1">
           <Button
             variant="outline"
-            className="w-full bg-[#5a474a] text-[#cdcdcd] cursor-pointer cursor-pointer transition-colors transition-transform duration-200
-    hover:bg-[#cdcdcd] hover:text-[#5a474a] hover:scale-105"
-            size="sm"
+            className="w-full cursor-pointer transition-colors transition-transform duration-200 hover:scale-105"
+            style={{ borderColor: genderColor, color: genderColor }}
           >
             Detalhes
           </Button>
@@ -106,8 +101,7 @@ const ProductCard = ({ product, onDelete }) => {
           <Button
             variant="destructive"
             size="sm"
-            className="border border-red-400 bg-#ae606b cursor-pointer cursor-pointer transition-colors transition-transform duration-200
-    hover:bg-[#e96666] hover:text-white hover:scale-105"
+            className="cursor-pointer transition-colors transition-transform duration-200 hover:scale-105"
             onClick={() => onDelete(product.id)}
           >
             Excluir

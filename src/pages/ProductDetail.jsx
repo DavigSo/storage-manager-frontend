@@ -5,7 +5,9 @@ import {
   useProducts,
   getCategoryName,
   getGenderName,
-} from '@/contexts/ProductContext';
+} from '../contexts/ProductContext';
+import api from '../services/api';
+import { useToast } from '../components/ui/use-toast';
 import { Button } from '../components/ui/button';
 import {
   Card,
@@ -28,26 +30,81 @@ import {
 export function ProductDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { isAuthenticated, isLoading } = useAuth();
-  const { getProductById, deleteProduct, loading } = useProducts();
+  const { toast } = useToast();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { getProductById, deleteProduct } = useProducts();
+
+  const [product, setProduct] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const [openDelete, setOpenDelete] = useState(false);
 
+  // Redireciona se não autenticado
   useEffect(() => {
-    if (!isLoading && !isAuthenticated) navigate('/login');
-  }, [isAuthenticated, isLoading, navigate]);
-
-  const product = id ? getProductById(id) : null;
-  const lowStock = product ? product.quantity < product.minimumStock : false;
-
-  const handleDelete = async () => {
-    if (id) {
-      const ok = await deleteProduct(id);
-      if (ok) navigate('/products');
+    if (!authLoading && !isAuthenticated) {
+      navigate('/login');
     }
-    setOpenDelete(false);
+  }, [isAuthenticated, authLoading, navigate]);
+
+  // Carrega o produto: primeiro do contexto, depois da API
+  useEffect(() => {
+    async function fetchProduct() {
+      setLoading(true);
+      try {
+        // Tenta do contexto
+        const ctxItem = getProductById(id);
+        if (ctxItem) {
+          setProduct(ctxItem);
+        } else {
+          const { data } = await api.get(`/items/${id}`);
+          setProduct(data);
+        }
+      } catch {
+        setError('Este produto não existe ou foi removido.');
+        toast({
+          title: 'Erro',
+          description: 'Este produto não existe ou foi removido.',
+          variant: 'destructive',
+        });
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchProduct();
+  }, [id, getProductById, toast]);
+
+  // Ações de delete
+  const handleDelete = async () => {
+    console.log('handleDelete dispara!'); // pra verificar no console
+    if (!product) return;
+
+    // exibe um loading local se quiser
+    try {
+      const ok = await deleteProduct(product._id);
+      if (ok) {
+        toast({ title: 'Produto excluído com sucesso.' });
+        navigate('/products');
+      } else {
+        // Se algo falhar no contexto, avise o usuário
+        toast({
+          title: 'Erro',
+          description: 'Não foi possível excluir o produto.',
+          variant: 'destructive',
+        });
+      }
+    } catch (e) {
+      console.error('Erro inesperado ao excluir:', e);
+      toast({
+        title: 'Erro',
+        description: 'Ocorreu um erro inesperado.',
+        variant: 'destructive',
+      });
+    } finally {
+      setOpenDelete(false);
+    }
   };
 
-  if (isLoading || loading) {
+  if (authLoading || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <p>Carregando...</p>
@@ -55,18 +112,13 @@ export function ProductDetail() {
     );
   }
 
-  if (!product) {
+  if (error || !product) {
     return (
-      <div className="pt-16 pl-64">
-        <div className="p-6">
-          <div className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
-            <h1 className="text-2xl font-bold">Produto Não Encontrado</h1>
-          </div>
+      <div className="pt-16 md:pl-64 pl-0">
+        <div className="p-6 max-w-4xl mx-auto">
           <Card>
             <CardContent className="p-6 text-center">
-              <p className="text-muted-foreground">
-                Este produto não existe ou foi removido.
-              </p>
+              <p className="text-muted-foreground">{error}</p>
               <Button
                 onClick={() => navigate('/products')}
                 className="mt-4 p-2 rounded-md transition-colors transition-transform duration-200 hover:bg-[#f68597] hover:text-white hover:scale-105"
@@ -80,22 +132,22 @@ export function ProductDetail() {
     );
   }
 
+  const lowStock = product.quantity < product.minimumStock;
+
   return (
-    <div className="pt-16 pl-64">
-      <div className="p-6">
-        <div className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
-          <h1 className="text-2xl font-bold">{product.name}</h1>
+    <div className="pt-16 md:pl-64 pl-0">
+      <div className="p-6 max-w-4xl mx-auto space-y-6">
+        <div className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold">
+          {product.name}
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Detalhes do Produto</CardTitle>
-            <CardDescription className="text-sm text-gray-600">
-              Veja as informações completas abaixo
-            </CardDescription>
+            <CardTitle>Detalhes do Produto</CardTitle>
+            <CardDescription>Informações completas abaixo</CardDescription>
           </CardHeader>
 
-          <CardContent className="p-6 space-y-6">
+          <CardContent className="space-y-6">
             <div className="flex justify-between">
               <Button
                 variant="outline"
@@ -107,14 +159,17 @@ export function ProductDetail() {
               <div className="flex space-x-2">
                 <Button
                   variant="outline"
-                  onClick={() => navigate(`/products/edit/${id}`)}
+                  onClick={() => navigate(`/products/edit/${product._id}`)}
                   className="p-2 rounded-md transition-colors transition-transform duration-200 hover:bg-[#f68597] hover:text-white hover:scale-105"
                 >
                   <Edit className="h-4 w-4 mr-2" /> Editar
                 </Button>
                 <Button
                   variant="destructive"
-                  onClick={() => setOpenDelete(true)}
+                  onClick={() => {
+                    console.log('Botão Excluir clicado');
+                    handleDelete();
+                  }}
                   className="p-2 rounded-md transition-colors transition-transform duration-200 hover:bg-red-600 hover:text-white hover:scale-105"
                 >
                   <Trash2 className="h-4 w-4 mr-2" /> Excluir
@@ -139,10 +194,10 @@ export function ProductDetail() {
               </Badge>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-y py-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 border-y py-4">
               <div>
                 <h3 className="font-medium text-muted-foreground">
-                  Quantidade em estoque
+                  Estoque atual
                 </h3>
                 <p
                   className={`text-2xl font-semibold ${lowStock ? 'text-destructive' : 'text-green-600'}`}
@@ -168,21 +223,6 @@ export function ProductDetail() {
                   </p>
                 </div>
               )}
-              <div>
-                <h3 className="font-medium text-muted-foreground">Status</h3>
-                <div className="mt-1">
-                  <Badge
-                    variant={lowStock ? 'destructive' : 'outline'}
-                    className={
-                      lowStock
-                        ? 'bg-red-100 text-red-800 hover:bg-red-100'
-                        : 'bg-green-100 text-green-800 hover:bg-green-100'
-                    }
-                  >
-                    {lowStock ? 'Estoque Baixo' : 'Estoque Adequado'}
-                  </Badge>
-                </div>
-              </div>
             </div>
 
             <div className="space-y-2 text-sm">
@@ -212,18 +252,10 @@ export function ProductDetail() {
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
-              <Button
-                variant="outline"
-                onClick={() => setOpenDelete(false)}
-                className="p-2 rounded-md transition-colors transition-transform duration-200 hover:bg-[#f68597] hover:text-white hover:scale-105"
-              >
+              <Button variant="outline" onClick={() => setOpenDelete(false)}>
                 Cancelar
               </Button>
-              <Button
-                variant="destructive"
-                onClick={handleDelete}
-                className="p-2 rounded-md transition-colors transition-transform duration-200 hover:bg-red-600 hover:text-white hover:scale-105"
-              >
+              <Button variant="destructive" onClick={handleDelete}>
                 Excluir
               </Button>
             </DialogFooter>

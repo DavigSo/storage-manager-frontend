@@ -1,14 +1,14 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8080/api', // Substitua pela URL do seu backend
+  baseURL: 'http://localhost:4000/api', // Substitua pela URL do seu backend
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
 // Interceptor para adicionar o token JWT
-api.interceptors.request.use((config) => {
+api.interceptors.request.use(config => {
   const token = localStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
@@ -18,8 +18,8 @@ api.interceptors.request.use((config) => {
 
 // Interceptor para tratamento de erros
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
+  response => response,
+  error => {
     if (error.response?.status === 401) {
       localStorage.removeItem('token');
       window.location.href = '/login';

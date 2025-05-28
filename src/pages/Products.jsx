@@ -79,8 +79,8 @@ const Products = () => {
     ...getGenderOptions(),
   ];
 
-  const handleDeleteProduct = id => {
-    setProductToDelete(id);
+  const handleDeleteProduct = _id => {
+    setProductToDelete(_id);
   };
 
   const confirmDelete = async () => {
@@ -115,7 +115,7 @@ const Products = () => {
   }
 
   return (
-    <div className="pt-16 pl-64">
+    <div className="pt-16 md:pl-64 pl-0">
       <div className="p-6">
         <div className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
           <h1 className="text-2xl font-bold">Controle de Produtos</h1>
@@ -205,7 +205,7 @@ const Products = () => {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredProducts.map(product => (
                   <ProductCard
-                    key={product.id}
+                    key={product._id}
                     product={product}
                     onDelete={handleDeleteProduct}
                   />

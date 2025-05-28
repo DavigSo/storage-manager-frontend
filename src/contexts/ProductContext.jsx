@@ -1,64 +1,12 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useToast } from '../components/ui/use-toast';
+import api from '../services/api';
 
 const ProductContext = createContext();
 
-const mockProducts = [
-  {
-    id: '1',
-    name: 'Body de algodão',
-    category: 'ROUPA_0_3M',
-    gender: 'UNISEX',
-    quantity: 15,
-    minimumStock: 2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '2',
-    name: 'Macacão manga longa',
-    category: 'ROUPA_0_3M',
-    gender: 'MASCULINO',
-    quantity: 8,
-    minimumStock: 2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '3',
-    name: 'Macacão manga longa',
-    category: 'ROUPA_0_3M',
-    gender: 'FEMININO',
-    quantity: 12,
-    minimumStock: 2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '4',
-    name: 'Fraldas descartáveis P',
-    category: 'HIGIENE',
-    gender: 'UNISEX',
-    quantity: 5,
-    minimumStock: 2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-  {
-    id: '5',
-    name: 'Toalha com capuz',
-    category: 'UTILITARIOS',
-    gender: 'UNISEX',
-    quantity: 18,
-    minimumStock: 2,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-  },
-];
-
 export const ProductProvider = ({ children }) => {
   const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const { toast } = useToast();
 
@@ -66,83 +14,63 @@ export const ProductProvider = ({ children }) => {
     getProducts();
   }, []);
 
+  const handleError = err => {
+    console.error(err);
+    const message =
+      err.response?.data?.message || err.message || 'Erro desconhecido.';
+    setError(message);
+    toast({
+      title: 'Erro',
+      description: message,
+      variant: 'destructive',
+    });
+  };
+
   const getProducts = async () => {
     setLoading(true);
     try {
-      // simula fetch
-      await new Promise(res => setTimeout(res, 1000));
-      setProducts(mockProducts);
+      const { data } = await api.get('/items');
+      setProducts(data);
       setError(null);
-    } catch {
-      setError('Falha ao carregar produtos.');
-      toast({
-        title: 'Erro',
-        description: 'Falha ao carregar produtos.',
-        variant: 'destructive',
-      });
+    } catch (err) {
+      handleError(err);
     } finally {
       setLoading(false);
     }
   };
 
-  const getProductById = id => products.find(p => p.id === id);
+  const getProductById = id => products.find(p => p._id === id);
 
   const addProduct = async product => {
     setLoading(true);
     try {
-      await new Promise(res => setTimeout(res, 1000));
-      const newProduct = {
-        ...product,
-
-        id: Math.random().toString(36).substr(2, 9),
-
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      };
-      console.log('[addProduct] newProduct:', newProduct);
-
-      setProducts(prev => [...prev, newProduct]);
+      const { data } = await api.post('/items', product);
+      setProducts(prev => [...prev, data]);
       toast({
         title: 'Produto adicionado',
         description: 'O produto foi adicionado com sucesso.',
       });
       return true;
-    } catch {
-      setError('Falha ao adicionar produto.');
-      toast({
-        title: 'Erro',
-        description: 'Falha ao adicionar produto.',
-        variant: 'destructive',
-      });
+    } catch (err) {
+      handleError(err);
       return false;
     } finally {
       setLoading(false);
     }
   };
 
-  const updateProduct = async (id, update) => {
+  const updateProduct = async (id, updates) => {
     setLoading(true);
     try {
-      await new Promise(res => setTimeout(res, 1000));
-      setProducts(prev =>
-        prev.map(p =>
-          p.id === id
-            ? { ...p, ...update, updatedAt: new Date().toISOString() }
-            : p
-        )
-      );
+      const { data } = await api.put(`/items/${id}`, updates);
+      setProducts(prev => prev.map(p => (p._id === id ? data : p)));
       toast({
         title: 'Produto atualizado',
         description: 'O produto foi atualizado com sucesso.',
       });
       return true;
-    } catch {
-      setError('Falha ao atualizar produto.');
-      toast({
-        title: 'Erro',
-        description: 'Falha ao atualizar produto.',
-        variant: 'destructive',
-      });
+    } catch (err) {
+      handleError(err);
       return false;
     } finally {
       setLoading(false);
@@ -152,20 +80,15 @@ export const ProductProvider = ({ children }) => {
   const deleteProduct = async id => {
     setLoading(true);
     try {
-      await new Promise(res => setTimeout(res, 1000));
-      setProducts(prev => prev.filter(p => p.id !== id));
+      await api.delete(`/items/${id}`);
+      setProducts(prev => prev.filter(p => p._id !== id));
       toast({
         title: 'Produto excluído',
         description: 'O produto foi excluído com sucesso.',
       });
       return true;
-    } catch {
-      setError('Falha ao excluir produto.');
-      toast({
-        title: 'Erro',
-        description: 'Falha ao excluir produto.',
-        variant: 'destructive',
-      });
+    } catch (err) {
+      handleError(err);
       return false;
     } finally {
       setLoading(false);
@@ -217,7 +140,7 @@ export const getGenderName = gender =>
     UNISEX: 'Unissex',
   })[gender] || gender;
 
-const categoryOptions = [
+export const getCategoryOptions = () => [
   { value: 'ROUPA_0_3M', label: getCategoryName('ROUPA_0_3M') },
   { value: 'ROUPA_3_6M', label: getCategoryName('ROUPA_3_6M') },
   { value: 'ROUPA_6_9M', label: getCategoryName('ROUPA_6_9M') },
@@ -226,16 +149,8 @@ const categoryOptions = [
   { value: 'HIGIENE', label: getCategoryName('HIGIENE') },
 ];
 
-const genderOptions = [
+export const getGenderOptions = () => [
   { value: 'MASCULINO', label: getGenderName('MASCULINO') },
   { value: 'FEMININO', label: getGenderName('FEMININO') },
   { value: 'UNISEX', label: getGenderName('UNISEX') },
 ];
-
-export function getCategoryOptions() {
-  return categoryOptions;
-}
-
-export function getGenderOptions() {
-  return genderOptions;
-}

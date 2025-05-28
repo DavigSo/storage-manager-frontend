@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import {
   useProducts,
   getCategoryOptions,
@@ -25,6 +25,9 @@ import {
 import Label from '../ui/LABEL.JSX';
 
 export function ProductForm({ productId, isEdit = false }) {
+  const { id: routeId } = useParams();
+  const effectiveId = productId || routeId;
+
   const { getProductById, addProduct, updateProduct, loading } = useProducts();
   const navigate = useNavigate();
   const [name, setName] = useState('');
@@ -35,8 +38,8 @@ export function ProductForm({ productId, isEdit = false }) {
   const [expirationDate, setExpirationDate] = useState('');
 
   useEffect(() => {
-    if (isEdit && productId) {
-      const product = getProductById(productId);
+    if (isEdit && effectiveId) {
+      const product = getProductById(effectiveId);
       if (product) {
         setName(product.name);
         setCategory(product.category);
@@ -46,7 +49,7 @@ export function ProductForm({ productId, isEdit = false }) {
         setExpirationDate(product.expirationDate || '');
       }
     }
-  }, [isEdit, productId, getProductById]);
+  }, [isEdit, effectiveId, getProductById]);
 
   const handleSubmit = async e => {
     e.preventDefault();
@@ -59,18 +62,22 @@ export function ProductForm({ productId, isEdit = false }) {
       expirationDate: expirationDate || undefined,
     };
     console.log('[ProductForm] dados enviados:', data);
+
     const success =
-      isEdit && productId
-        ? await updateProduct(productId, data)
+      isEdit && effectiveId
+        ? await updateProduct(effectiveId, data)
         : await addProduct(data);
-    if (success) navigate('/products');
+
+    if (success) {
+      navigate('/products');
+    }
   };
 
   const categoryOptions = getCategoryOptions();
   const genderOptions = getGenderOptions();
 
   return (
-    <div className="pt-16 pl-64">
+    <div className="pt-16 md:pl-64 pl-0">
       <div className="p-6">
         <div className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
           <h1 className="text-2xl font-bold">
@@ -105,10 +112,9 @@ export function ProductForm({ productId, isEdit = false }) {
                   <SelectTrigger
                     id="category"
                     className="
-    flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
-    transition-colors transition-transform duration-200
-    hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer 
-  "
+                      flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
+                      transition-colors transition-transform duration-200
+                      hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer"
                   >
                     <SelectValue placeholder="Selecione categoria" />
                   </SelectTrigger>
@@ -131,10 +137,9 @@ export function ProductForm({ productId, isEdit = false }) {
                   <SelectTrigger
                     id="gender"
                     className="
-    flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
-    transition-colors transition-transform duration-200
-    hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer 
-  "
+                      flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
+                      transition-colors transition-transform duration-200
+                      hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer"
                   >
                     <SelectValue placeholder="Selecione gênero" />
                   </SelectTrigger>
