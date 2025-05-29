@@ -91,7 +91,7 @@ const ProductCard = ({ product, onDelete }) => {
         <Link to={`/products/${product._id}`} className="flex-1">
           <Button
             variant="outline"
-            className="w-full cursor-pointer transition-colors transition-transform duration-200 hover:scale-105"
+            
             style={{ borderColor: genderColor, color: genderColor }}
           >
             Detalhes
@@ -101,8 +101,8 @@ const ProductCard = ({ product, onDelete }) => {
           <Button
             variant="destructive"
             size="sm"
-            className="cursor-pointer transition-colors transition-transform duration-200 hover:scale-105"
-            onClick={() => onDelete(product.id)}
+            
+            onClick={() => onDelete(product._id)}
           >
             Excluir
           </Button>
