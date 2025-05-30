@@ -30,7 +30,7 @@ export const ProductProvider = ({ children }) => {
     setLoading(true);
     try {
       const { data } = await api.get('/items');
-      setProducts(data);
+      setProducts(Array.isArray(data) ? data : data.items || []);
       setError(null);
     } catch (err) {
       handleError(err);
@@ -95,7 +95,9 @@ export const ProductProvider = ({ children }) => {
     }
   };
 
-  const lowStockProducts = products.filter(p => p.quantity < p.minimumStock);
+  const lowStockProducts = Array.isArray(products)
+    ? products.filter(p => p.quantity < p.minimumStock)
+    : [];
 
   return (
     <ProductContext.Provider

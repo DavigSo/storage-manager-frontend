@@ -115,7 +115,7 @@ const Products = () => {
   }
 
   return (
-    <div className="pt-16 md:pl-64 pl-0">
+    <div className="pt-16 md:pl-64 pl-0 ">
       <div className="p-6">
         <div className="text-2xl text-center text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
           <h1 className="text-2xl font-bold">Controle de Produtos</h1>
@@ -123,7 +123,7 @@ const Products = () => {
             onClick={() => navigate('/products/add')}
             className="
     flex items-center gap-2 px-4 py-2 rounded-md text-sm font-medium
-    transition-colors transition-transform duration-200
+     duration-200
     hover:bg-[#f68597] hover:text-white hover:scale-105 cursor-pointer 
   "
           >
@@ -152,7 +152,7 @@ const Products = () => {
                 <SelectContent className=" text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
                   {categoryOptions.map(option => (
                     <SelectItem
-                      className="cursor-pointer transition-colors transition-transform duration-200
+                      className="cursor-pointer duration-200
     hover:bg-[#f68597] hover:text-white hover:scale-105"
                       key={option.value}
                       value={option.value}
@@ -176,7 +176,7 @@ const Products = () => {
                 <SelectContent className=" text-[#f68597] border-[#93c2d2] bg-[#feebee] p-2 border rounded-2xl font-bold mb-6">
                   {genderOptions.map(option => (
                     <SelectItem
-                      className="cursor-pointer transition-colors transition-transform duration-200
+                      className="cursor-pointer  duration-200
     hover:bg-[#f68597] hover:text-white hover:scale-105"
                       key={option.value}
                       value={option.value}
@@ -202,13 +202,14 @@ const Products = () => {
                 </p>
               </div>
             ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 auto-rows-fr">
                 {filteredProducts.map(product => (
-                  <ProductCard
-                    key={product._id}
-                    product={product}
-                    onDelete={handleDeleteProduct}
-                  />
+                  <div key={product._id} className="h-full">
+                    <ProductCard
+                      product={product}
+                      onDelete={handleDeleteProduct}
+                    />
+                  </div>
                 ))}
               </div>
             )}
@@ -226,20 +227,10 @@ const Products = () => {
                   </DialogDescription>
                 </DialogHeader>
                 <DialogFooter>
-                  <Button
-                    className="  p-10 w-full bg-[#5a474a] text-[#cdcdcd] cursor-pointer cursor-pointer transition-colors transition-transform duration-200
-    hover:bg-[#cdcdcd] hover:text-[#5a474a] hover:scale-105"
-                    variant="outline"
-                    onClick={cancelDelete}
-                  >
+                  <Button variant="outline" onClick={cancelDelete}>
                     Cancelar
                   </Button>
-                  <Button
-                    className=" border-red-400 bg-#ae606b cursor-pointer cursor-pointer transition-colors transition-transform duration-200
-    hover:bg-[#e96666] hover:text-white hover:scale-105"
-                    variant="destructive"
-                    onClick={confirmDelete}
-                  >
+                  <Button variant="destructive" onClick={confirmDelete}>
                     Excluir
                   </Button>
                 </DialogFooter>

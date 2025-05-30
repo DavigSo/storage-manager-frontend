@@ -19,6 +19,9 @@ const badgeVariants = cva(
         warning:
           'border-transparent bg-yellow-500 text-white hover:bg-yellow-600',
         info: 'border-transparent bg-blue-500 text-white hover:bg-blue-600',
+        masculino: 'border-transparent bg-blue-800 text-blue-100  ',
+        feminino: 'border-transparent bg-pink-100 text-pink-800 ',
+        unisex: 'border-transparent bg-purple-100 text-purple-800 ',
       },
     },
     defaultVariants: {
@@ -27,10 +30,8 @@ const badgeVariants = cva(
   }
 );
 
-function Badge({ className, variant, ...props }) {
+export function Badge({ className, variant = 'default', ...props }) {
   return (
     <div className={cn(badgeVariants({ variant }), className)} {...props} />
   );
 }
-
-export { Badge, badgeVariants };

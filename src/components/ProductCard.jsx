@@ -1,4 +1,3 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Card,
@@ -10,90 +9,93 @@ import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
 import { getCategoryName, getGenderName } from '@/contexts/ProductContext';
 
-const ProductCard = ({ product, onDelete }) => {
-  const isLowStock = product.quantity < product.minimumStock;
+const genderStyles = {
+  MASCULINO: {
+    headerBg: 'bg-blue-100',
+    badgeVariant: 'masculino',
+    textColor: 'text-blue-900',
+  },
+  FEMININO: {
+    headerBg: 'bg-pink-300',
+    badgeVariant: 'feminino',
+    textColor: 'text-pink-900',
+  },
+  UNISEX: {
+    headerBg: 'bg-purple-200',
+    badgeVariant: 'unisex',
+    textColor: 'text-purple-900',
+  },
+};
 
-  // Define cores por gênero
-  const genderColors = {
-    MASCULINO: '#2c2cc7',
-    FEMININO: '#ad83bd',
-    UNISEX: '#9090cf',
-  };
-  const genderColor = genderColors[product.gender] || '#F3F4F6';
+const ProductCard = ({ product, onDelete }) => {
+  const gender = product.gender;
+  const genderLabel = getGenderName(gender);
+  const styles = genderStyles[gender] || {};
 
   return (
-    <Card
-      style={{
-        backgroundColor: `${genderColor}20`,
-        color: genderColor,
-      }}
-      className="card-hover transition-transform transform hover:scale-105"
-    >
-      <CardHeader className="flex flex-col sm:flex-row justify-between items-start gap-2 pb-2 p-4 sm:p-6">
+    <Card className="flex flex-col h-full bg-white text-inherit transition-transform transform hover:scale-105">
+      <CardHeader
+        className={`flex flex-col sm:flex-row justify-between items-start gap-2 p-4 sm:p-6 ${styles.headerBg}`}
+      >
         <div className="flex-1 space-y-1">
-          <h3 className="text-base sm:text-lg md:text-xl font-semibold break-words">
+          <h3
+            className={`text-base sm:text-lg md:text-xl font-semibold break-words ${styles.textColor}`}
+          >
             {product.name}
           </h3>
           <p className="text-xs sm:text-sm text-muted-foreground">
             {getCategoryName(product.category)}
           </p>
         </div>
+
         <Badge
-          variant={
-            product.gender === 'MASCULINO'
-              ? 'default'
-              : product.gender === 'FEMININO'
-                ? 'secondary'
-                : 'outline'
-          }
+          variant={styles.badgeVariant}
+          className="self-start sm:self-center"
         >
-          {getGenderName(product.gender)}
+          {genderLabel}
         </Badge>
       </CardHeader>
 
-      <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4 pb-2 p-4 sm:p-6">
-        <div className="flex flex-col">
+      <CardContent
+        className={`flex-grow p-4 sm:p-6 space-y-4 ${styles.headerBg}`}
+      >
+        <div>
+          <p className="mt-1 text-base">{genderLabel}</p>
+        </div>
+
+        <div>
           <span className="text-xs sm:text-sm text-muted-foreground">
             Quantidade:
           </span>
-          <span
-            className={`mt-1 font-semibold ${
-              isLowStock ? 'text-destructive' : 'text-green-600'
-            }`}
-            style={{ color: genderColor }}
-          >
+          <span className="mt-1 font-semibold text-green-600">
             {product.quantity}
           </span>
         </div>
 
-        <div className="flex flex-col">
+        <div>
           <span className="text-xs sm:text-sm text-muted-foreground">
             Estoque mínimo:
           </span>
-          <span className="mt-1 font-medium" style={{ color: genderColor }}>
-            {product.minimumStock}
-          </span>
+          <span className="mt-1 font-medium">{product.minimumStock}</span>
         </div>
 
         {product.expirationDate && (
-          <div className="flex flex-col sm:col-span-2">
+          <div>
             <span className="text-xs sm:text-sm text-muted-foreground">
               Validade:
             </span>
-            <span className="mt-1 font-medium" style={{ color: genderColor }}>
+            <span className="mt-1 font-medium">
               {new Date(product.expirationDate).toLocaleDateString('pt-BR')}
             </span>
           </div>
         )}
       </CardContent>
 
-      <CardFooter className="flex flex-col sm:flex-row items-stretch p-4 sm:p-6 pt-2 gap-2">
-        <Link to={`/products/${product._id}`} className="flex-1">
-          <Button
-            variant="outline"
-            
-            style={{ borderColor: genderColor, color: genderColor }}
-          >
+      <CardFooter
+        className={`flex flex-col sm:flex-row sm:justify-between items-center gap-2 p-4 sm:p-6 flex-wrap mt-auto  ${styles.headerBg}`}
+      >
+        <Link to={`/products/${product._id}`} className="w-full sm:flex-1">
+          <Button className="w-full" variant="outline">
             Detalhes
           </Button>
         </Link>
@@ -101,7 +103,6 @@ const ProductCard = ({ product, onDelete }) => {
           <Button
             variant="destructive"
             size="sm"
-            
             onClick={() => onDelete(product._id)}
           >
             Excluir
