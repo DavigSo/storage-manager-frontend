@@ -95,7 +95,7 @@ function LoginForm() {
               duration-200 "
             >
               {isLoading ? 'Carregando...' : 'Entrar'}
-            </button>
+            </button>                       
           </div>
         </form>
       </div>

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-
+                  
 function RegisterForm() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
